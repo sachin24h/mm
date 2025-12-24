@@ -1,0 +1,7 @@
+{
+  "name": "MarginMaster AI",
+  "description": "A high-end platform for creators to ensure their content is safe from social media UI overlays and device-specific clipping.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

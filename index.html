@@ -1,0 +1,521 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarginMaster AI | Content Safety Studio</title>
+    <!-- Use static Tailwind CSS to avoid 'unsafe-eval' from the Play CDN JIT compiler -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-main: #030303;
+            --bg-card: #0a0a0a;
+            --blue-accent: #3b82f6;
+            --border-muted: rgba(255, 255, 255, 0.05);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .bg-main { background-color: var(--bg-main); }
+        .bg-card { background-color: var(--bg-card); }
+        .text-accent { color: var(--blue-accent); }
+        .border-muted { border-color: var(--border-muted); }
+        
+        .device-shadow {
+            box-shadow: 0 0 0 2px #1a1a1a, 0 40px 100px -20px rgba(0,0,0,0.9);
+        }
+        .dynamic-island {
+            width: 110px;
+            height: 32px;
+            background: #000;
+            border-radius: 20px;
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            border: 1px solid #1a1a1a;
+        }
+        .punch-hole {
+            width: 14px;
+            height: 14px;
+            background: #000;
+            border-radius: 50%;
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            border: 1px solid #222;
+        }
+        .hidden { display: none !important; }
+        
+        .glass {
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-muted);
+        }
+
+        /* Custom Range Slider (Standard CSS) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]:focus { outline: none; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: #262626;
+            border-radius: 2px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid var(--blue-accent);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -6px;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Utility classes replacement for JIT features */
+        .rounded-4xl { border-radius: 2.5rem; }
+        .rounded-5xl { border-radius: 3rem; }
+        .tracking-widest-plus { tracking: 0.3em; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+    <!-- LANDING PAGE -->
+    <div id="landing-page" class="relative z-[200]">
+        <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-muted">
+            <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-black mr-3 shadow-lg">M</div>
+                    <span class="font-bold text-xl tracking-tighter">MarginMaster <span class="text-blue-500">AI</span></span>
+                </div>
+                <button onclick="launchApp()" class="px-8 py-2 bg-white text-black font-bold rounded-full text-sm hover:bg-blue-600 hover:text-white transition-all">
+                    Launch Studio
+                </button>
+            </div>
+        </nav>
+
+        <section class="pt-48 pb-20 px-6 text-center max-w-7xl mx-auto">
+            <div class="inline-flex items-center bg-blue-900 bg-opacity-20 border border-blue-500 border-opacity-20 rounded-full px-4 py-1 text-blue-400 text-xs font-black uppercase tracking-widest mb-10">
+                <i data-lucide="shield" class="w-4 h-4 mr-2"></i> Safety Guaranteed
+            </div>
+            <h1 class="text-6xl md:text-8xl font-black tracking-tight leading-none mb-10">
+                Stop Content <br/><span class="text-gray-700">Clipping Now.</span>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-16">
+                Professional hardware proofing for TikTok, Reels, and Shorts. Test your assets on real device dimensions before publishing.
+            </p>
+            <div class="flex justify-center gap-6">
+                <button onclick="launchApp()" class="px-12 py-5 bg-blue-600 hover:bg-blue-500 text-white font-black rounded-3xl text-xl flex items-center transition-all shadow-xl">
+                    Open Studio <i data-lucide="chevron-right" class="ml-2"></i>
+                </button>
+            </div>
+
+            <div class="mt-24 relative max-w-4xl mx-auto animate-float">
+                <div class="glass p-4 rounded-5xl shadow-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1600&auto=format&fit=crop" class="w-full rounded-4xl opacity-50 filter grayscale" alt="Preview">
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- MAIN APP STUDIO -->
+    <div id="app-page" class="hidden flex flex-col lg:flex-row min-h-screen bg-main">
+        <!-- Sidebar -->
+        <aside class="w-full lg:w-96 p-8 glass border-r border-muted space-y-10 overflow-y-auto max-h-screen z-50">
+            <div class="flex items-center pb-6 border-b border-muted">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-black mr-3">M</div>
+                <h1 class="font-bold text-lg tracking-tight">Studio <span class="text-blue-500">AI</span></h1>
+            </div>
+
+            <!-- Upload -->
+            <div class="space-y-4">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-gray-500">1. Media Source</h2>
+                <label class="block w-full cursor-pointer">
+                    <div class="w-full flex items-center justify-center gap-3 p-6 bg-white bg-opacity-5 border border-dashed border-gray-700 rounded-3xl hover:bg-opacity-10 transition-all">
+                        <i data-lucide="upload" class="w-5 h-5 text-gray-400"></i>
+                        <span class="font-bold text-sm">Upload Video/Image</span>
+                    </div>
+                    <input type="file" id="media-upload" class="hidden" accept="image/*,video/*">
+                </label>
+            </div>
+
+            <!-- Device Select -->
+            <div class="space-y-4">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-gray-500">2. Device Simulation</h2>
+                <div class="flex gap-2 p-1 bg-black bg-opacity-30 rounded-2xl">
+                    <button id="btn-apple" onclick="setBrand('apple')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10 text-white">Apple</button>
+                    <button id="btn-android" onclick="setBrand('android')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500">Android</button>
+                </div>
+                <select id="device-select" onchange="updateDevice()" class="w-full p-4 bg-gray-900 border border-gray-800 rounded-xl text-sm font-bold text-white outline-none cursor-pointer">
+                    <!-- Dynamic -->
+                </select>
+            </div>
+
+            <!-- Behavior -->
+            <div class="space-y-4">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-gray-500">3. Safe View Mode</h2>
+                <div class="flex gap-2 p-1 bg-black bg-opacity-30 rounded-2xl">
+                    <button id="view-ui" onclick="setView('ui')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10">Actual UI</button>
+                    <button id="view-margins" onclick="setView('margins')" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500">Safe Zones</button>
+                </div>
+            </div>
+
+            <!-- Platform -->
+            <div class="space-y-4">
+                <h2 class="text-[10px] font-black uppercase tracking-widest text-gray-500">4. Context</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="plat-insta" onclick="setPlatform('instagram')" class="p-3 bg-gray-900 border border-blue-500 border-opacity-50 rounded-xl text-[10px] font-black uppercase text-blue-400">Instagram</button>
+                    <button id="plat-tiktok" onclick="setPlatform('tiktok')" class="p-3 bg-gray-900 border border-gray-800 rounded-xl text-[10px] font-black uppercase text-gray-500">TikTok</button>
+                </div>
+                <div id="insta-contexts" class="grid grid-cols-2 gap-2">
+                    <button id="ctx-reels" onclick="setContext('reels_tab')" class="p-2 rounded-lg text-[9px] font-black uppercase bg-white bg-opacity-5 text-white">Reels Tab</button>
+                    <button id="ctx-feed" onclick="setContext('feed')" class="p-2 rounded-lg text-[9px] font-black uppercase text-gray-500">Main Feed</button>
+                </div>
+            </div>
+
+            <!-- AI Intelligence -->
+            <div class="pt-8 border-t border-muted">
+                <button id="sync-btn" onclick="syncMargins()" class="w-full flex items-center justify-center p-4 bg-white text-black rounded-3xl text-xs font-black uppercase hover:bg-blue-600 hover:text-white transition-all">
+                    <i data-lucide="cpu" class="w-4 h-4 mr-2"></i> Sync Platform AI
+                </button>
+            </div>
+        </aside>
+
+        <!-- Preview Area -->
+        <main class="flex-1 p-12 flex flex-col items-center justify-center relative">
+            <div id="device-container" class="relative transition-transform duration-500">
+                <div id="device-shell" class="device-shadow relative bg-gray-900 overflow-hidden" style="border: 2px solid #222;">
+                    <div id="screen" class="relative w-full h-full bg-black overflow-hidden" style="border-radius: 44px;">
+                        
+                        <!-- Notch -->
+                        <div id="device-notch" class="dynamic-island"></div>
+                        
+                        <!-- Content -->
+                        <div id="content-container" class="w-full h-full flex items-center justify-center transition-all duration-700 overflow-hidden">
+                            <div id="media-viewport" class="w-full h-full flex items-center justify-center transition-transform duration-700">
+                                <div id="media-placeholder" class="text-gray-700 font-black text-center p-16 space-y-4">
+                                    <i data-lucide="video" class="w-12 h-12 mx-auto opacity-20"></i>
+                                    <p class="text-[9px] uppercase tracking-widest opacity-50">Empty Studio</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Overlays -->
+                        <div id="ui-overlay" class="absolute inset-0 pointer-events-none z-40"></div>
+                        <div id="heat-overlay" class="absolute inset-0 pointer-events-none hidden z-50"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Player Controls -->
+            <div id="video-controls" class="hidden mt-12 w-full max-w-md glass p-6 rounded-4xl flex items-center gap-6">
+                <button id="play-pause" class="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all">
+                    <i data-lucide="play" fill="black" class="w-5 h-5 ml-1"></i>
+                </button>
+                <div class="flex-1">
+                    <div class="flex justify-between text-[9px] font-black text-gray-500 uppercase tracking-widest mb-2">
+                        <span id="time-current">0:00</span>
+                        <span id="time-total">0:00</span>
+                    </div>
+                    <input type="range" id="scrubber" min="0" value="0" step="0.01">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MAIN LOGIC (Strictly no eval, no new Function) -->
+    <script type="module">
+        import { GoogleGenAI, Type } from "@google/genai";
+
+        // APP STATE
+        const state = {
+            brand: 'apple',
+            device: null,
+            platform: 'instagram',
+            context: 'reels_tab',
+            view: 'ui',
+            mediaUrl: null,
+            mediaType: null,
+            isPlaying: false
+        };
+
+        const DEVICES = {
+            apple: [
+                { id: 'ip16pm', name: 'iPhone 16 Pro Max', w: 440, h: 952, r: 55, bezel: 10, notch: 'dynamic' },
+                { id: 'ip15p', name: 'iPhone 15 Pro', w: 393, h: 852, r: 48, bezel: 10, notch: 'dynamic' },
+                { id: 'ip14', name: 'iPhone 14', w: 390, h: 844, r: 44, bezel: 14, notch: 'classic' }
+            ],
+            android: [
+                { id: 's24u', name: 'Samsung S24 Ultra', w: 384, h: 854, r: 4, bezel: 12, notch: 'punch' },
+                { id: 'px9p', name: 'Google Pixel 9 Pro', w: 412, h: 915, r: 36, bezel: 12, notch: 'punch' }
+            ]
+        };
+
+        const MARGINS = {
+            instagram: {
+                reels_tab: { top: 12, bottom: 24, right: 18 },
+                feed: { top: 18, bottom: 20, right: 0 }
+            },
+            tiktok: {
+                reels_tab: { top: 10, bottom: 30, right: 20 }
+            }
+        };
+
+        // UI Element Hooks
+        const el = {
+            landing: document.getElementById('landing-page'),
+            app: document.getElementById('app-page'),
+            mediaUpload: document.getElementById('media-upload'),
+            deviceSelect: document.getElementById('device-select'),
+            viewport: document.getElementById('media-viewport'),
+            uiOverlay: document.getElementById('ui-overlay'),
+            heatOverlay: document.getElementById('heat-overlay'),
+            videoControls: document.getElementById('video-controls'),
+            scrubber: document.getElementById('scrubber'),
+            playBtn: document.getElementById('play-pause'),
+            timeCurrent: document.getElementById('time-current'),
+            timeTotal: document.getElementById('time-total'),
+            deviceShell: document.getElementById('device-shell'),
+            screen: document.getElementById('screen'),
+            notch: document.getElementById('device-notch'),
+            content: document.getElementById('content-container')
+        };
+
+        window.launchApp = () => {
+            el.landing.classList.add('hidden');
+            el.app.classList.remove('hidden');
+            updateDeviceList();
+            lucide.createIcons();
+        };
+
+        window.setBrand = (brand) => {
+            state.brand = brand;
+            document.getElementById('btn-apple').className = brand === 'apple' ? 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10 text-white' : 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('btn-android').className = brand === 'android' ? 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10 text-white' : 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            updateDeviceList();
+        };
+
+        function updateDeviceList() {
+            el.deviceSelect.innerHTML = DEVICES[state.brand].map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+            updateDevice();
+        }
+
+        window.updateDevice = () => {
+            const id = el.deviceSelect.value;
+            state.device = DEVICES[state.brand].find(d => d.id === id);
+            renderDevice();
+        };
+
+        window.setView = (view) => {
+            state.view = view;
+            document.getElementById('view-ui').className = view === 'ui' ? 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10' : 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('view-margins').className = view === 'margins' ? 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-white bg-opacity-10' : 'flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            el.uiOverlay.classList.toggle('hidden', view !== 'ui');
+            el.heatOverlay.classList.toggle('hidden', view !== 'margins');
+        };
+
+        window.setPlatform = (p) => {
+            state.platform = p;
+            document.getElementById('plat-insta').className = p === 'instagram' ? 'p-3 bg-gray-900 border border-blue-500 border-opacity-50 rounded-xl text-[10px] font-black uppercase text-blue-400' : 'p-3 bg-gray-900 border border-gray-800 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('plat-tiktok').className = p === 'tiktok' ? 'p-3 bg-gray-900 border border-blue-500 border-opacity-50 rounded-xl text-[10px] font-black uppercase text-blue-400' : 'p-3 bg-gray-900 border border-gray-800 rounded-xl text-[10px] font-black uppercase text-gray-500';
+            document.getElementById('insta-contexts').classList.toggle('hidden', p !== 'instagram');
+            renderUI();
+            renderMedia();
+        };
+
+        window.setContext = (ctx) => {
+            state.context = ctx;
+            document.getElementById('ctx-reels').className = ctx === 'reels_tab' ? 'p-2 rounded-lg text-[9px] font-black uppercase bg-white bg-opacity-5 text-white' : 'p-2 rounded-lg text-[9px] font-black uppercase text-gray-500';
+            document.getElementById('ctx-feed').className = ctx === 'feed' ? 'p-2 rounded-lg text-[9px] font-black uppercase bg-white bg-opacity-5 text-white' : 'p-2 rounded-lg text-[9px] font-black uppercase text-gray-500';
+            renderUI();
+            renderMedia();
+        };
+
+        function renderDevice() {
+            const d = state.device;
+            el.deviceShell.style.width = d.w + 'px';
+            el.deviceShell.style.height = d.h + 'px';
+            el.deviceShell.style.borderRadius = (d.r + d.bezel) + 'px';
+            el.deviceShell.style.padding = d.bezel + 'px';
+            el.screen.style.borderRadius = d.r + 'px';
+            el.notch.className = d.notch === 'dynamic' ? 'dynamic-island' : (d.notch === 'punch' ? 'punch-hole' : 'hidden');
+        }
+
+        el.mediaUpload.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            state.mediaUrl = URL.createObjectURL(file);
+            state.mediaType = file.type.startsWith('video') ? 'video' : 'image';
+            renderMedia();
+        };
+
+        function renderMedia() {
+            if (!state.mediaUrl) return;
+
+            const m = MARGINS[state.platform][state.context] || MARGINS[state.platform]['reels_tab'];
+            
+            // Adaptive Scaling Logic
+            el.content.style.paddingTop = (m.top * 0.7) + '%';
+            el.content.style.paddingBottom = (m.bottom * 0.7) + '%';
+            el.viewport.style.transform = 'scale(1.06)';
+
+            if (state.mediaType === 'video') {
+                el.viewport.innerHTML = `<video id="video-element" src="${state.mediaUrl}" loop muted class="w-full h-full object-cover"></video>`;
+                const video = document.getElementById('video-element');
+                el.videoControls.classList.remove('hidden');
+                
+                video.onloadedmetadata = () => {
+                    el.scrubber.max = video.duration;
+                    el.timeTotal.innerText = formatTime(video.duration);
+                };
+                video.ontimeupdate = () => {
+                    el.scrubber.value = video.currentTime;
+                    el.timeCurrent.innerText = formatTime(video.currentTime);
+                };
+                el.playBtn.onclick = () => {
+                    if (video.paused) {
+                        video.play();
+                        el.playBtn.innerHTML = '<i data-lucide="pause" fill="black"></i>';
+                    } else {
+                        video.pause();
+                        el.playBtn.innerHTML = '<i data-lucide="play" fill="black" class="ml-1"></i>';
+                    }
+                    lucide.createIcons();
+                };
+                el.scrubber.oninput = (ev) => {
+                    video.currentTime = ev.target.value;
+                };
+            } else {
+                el.viewport.innerHTML = `<img src="${state.mediaUrl}" class="w-full h-full object-cover">`;
+                el.videoControls.classList.add('hidden');
+            }
+            renderUI();
+        }
+
+        function formatTime(sec) {
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return m + ':' + s.toString().padStart(2, '0');
+        }
+
+        function renderUI() {
+            const m = MARGINS[state.platform][state.context] || MARGINS[state.platform]['reels_tab'];
+            if (state.platform === 'instagram') {
+                const isFeed = state.context === 'feed';
+                el.uiOverlay.innerHTML = `
+                    <div class="flex flex-col h-full text-white">
+                        <div class="p-6 pt-12 flex justify-between items-center opacity-80">
+                            ${isFeed ? `<span class="font-bold text-lg">Instagram</span>` : `<i data-lucide="chevron-left" class="w-8 h-8"></i>`}
+                            <div class="flex gap-4"><i data-lucide="heart" class="w-6 h-6"></i><i data-lucide="camera" class="w-6 h-6"></i></div>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-end p-6 pb-20">
+                            <div class="flex justify-between items-end">
+                                <div class="max-w-[70%] space-y-2">
+                                    <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-gray-800"></div><span class="font-bold text-xs">margin_master</span></div>
+                                    <p class="text-[10px] leading-tight">Professional 9:16 safe-zone calibration.</p>
+                                </div>
+                                <div class="flex flex-col items-center gap-6 mb-4">
+                                    <div class="flex flex-col items-center gap-1"><i data-lucide="heart" class="w-7 h-7"></i><span class="text-[9px] font-black">12k</span></div>
+                                    <div class="flex flex-col items-center gap-1"><i data-lucide="message-circle" class="w-7 h-7"></i><span class="text-[9px] font-black">400</span></div>
+                                    <i data-lucide="send" class="w-6 h-6"></i>
+                                    <i data-lucide="more-vertical" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="h-20 flex justify-around items-center border-t border-white border-opacity-10 bg-black bg-opacity-90 pb-4">
+                            <i data-lucide="home" class="w-6 h-6"></i>
+                            <i data-lucide="search" class="w-6 h-6 opacity-50"></i>
+                            <i data-lucide="clapperboard" class="w-6 h-6"></i>
+                            <div class="w-6 h-6 rounded-full bg-gray-700"></div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                el.uiOverlay.innerHTML = `<div class="p-20 text-center text-gray-600 font-black text-xs uppercase">${state.platform} UI PREVIEW</div>`;
+            }
+
+            el.heatOverlay.innerHTML = `
+                <div class="absolute top-0 left-0 right-0 bg-red-600 bg-opacity-30 border-b border-red-500 flex items-center justify-center font-black text-[9px] uppercase text-white" style="height: ${m.top}%">Danger: Header</div>
+                <div class="absolute bottom-0 left-0 right-0 bg-red-600 bg-opacity-30 border-t border-red-500 flex items-center justify-center font-black text-[9px] uppercase text-white" style="height: ${m.bottom}%">Danger: Tabs</div>
+                <div class="absolute right-0 top-0 bottom-0 bg-red-600 bg-opacity-30 border-l border-red-500 flex items-center justify-center font-black text-[9px] uppercase text-white" style="width: ${m.right}%"><span class="transform rotate-90">Sidebar</span></div>
+            `;
+            lucide.createIcons();
+        }
+
+        window.syncMargins = async () => {
+            const btn = document.getElementById('sync-btn');
+            const original = btn.innerHTML;
+            btn.innerHTML = 'Syncing...';
+
+            try {
+                const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                const response = await ai.models.generateContent({
+                    model: "gemini-3-flash-preview",
+                    contents: "Find current UI safe percentages for " + state.platform + " 2025.",
+                    config: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: Type.OBJECT,
+                            properties: {
+                                top: { type: Type.NUMBER },
+                                bottom: { type: Type.NUMBER },
+                                right: { type: Type.NUMBER },
+                                reason: { type: Type.STRING }
+                            }
+                        }
+                    }
+                });
+                const data = JSON.parse(response.text);
+                MARGINS[state.platform][state.context] = data;
+                renderMedia();
+                alert("Dimensions Synced: " + data.reason);
+            } catch (err) {
+                console.error(err);
+                alert("AI unavailable. Reverting to local cache.");
+            } finally {
+                btn.innerHTML = original;
+                lucide.createIcons();
+            }
+        };
+
+        // Init
+        lucide.createIcons();
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
